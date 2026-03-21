@@ -23,6 +23,29 @@ const MovieCard = ({ movie }) => {
           ))}
         </div>
         <p className="movie-plot">{movie.plot ? movie.plot.slice(0, 100) + '...' : 'No plot available.'}</p>
+        
+        <div className="movie-actions">
+          {movie.externalLinks?.ott && (
+            <a 
+              href={movie.externalLinks.ott} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="action-btn ott-btn"
+            >
+              Watch Now
+            </a>
+          )}
+          {movie.externalLinks?.wikipedia && (
+            <a 
+              href={movie.externalLinks.wikipedia} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="action-btn wiki-btn"
+            >
+              Info
+            </a>
+          )}
+        </div>
       </div>
     </div>
   );

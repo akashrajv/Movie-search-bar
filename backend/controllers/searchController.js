@@ -26,15 +26,8 @@ exports.getAutocomplete = async (req, res) => {
       },
       {
         $limit: 10
-      },
-      {
-        $project: {
-          _id: 1,
-          title: 1,
-          year: 1,
-          poster: 1
-        }
       }
+      // Removed projection to ensure all fields like externalLinks are returned
     ];
 
     const results = await collection.aggregate(pipeline).toArray();
@@ -93,18 +86,8 @@ exports.getSearch = async (req, res) => {
           data: [
             { $skip: skip },
             { $limit: limit },
-            { 
-               $project: {
-                 _id: 1,
-                 title: 1,
-                 year: 1,
-                 poster: 1,
-                 plot: 1,
-                 fullplot: 1,
-                 imdb: 1,
-                 genres: 1,
-                 cast: 1,
-                 directors: 1,
+            {
+               $addFields: {
                  score: { $meta: 'searchScore' }
                }
             }

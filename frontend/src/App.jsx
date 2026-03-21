@@ -64,10 +64,21 @@ function App() {
     }
   };
 
-  const handleSuggestionClick = (title) => {
-    setQuery(title);
+  const handleSuggestionClick = (movie) => {
+    setQuery(movie.title);
     setShowSuggestions(false);
-    // Give state time to update before fetching
+    
+    // Redirection logic
+    const links = movie.externalLinks;
+    if (links) {
+      const redirectUrl = links.ott || links.wikipedia;
+      if (redirectUrl) {
+        window.open(redirectUrl, '_blank', 'noopener,noreferrer');
+        return; // Skip search if redirecting from suggestion
+      }
+    }
+
+    // Fallback to normal search if no links
     setTimeout(() => {
       document.getElementById('search-form').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
     }, 0);
@@ -100,7 +111,7 @@ function App() {
               {showSuggestions && suggestions.length > 0 && (
                 <ul className="autocomplete-dropdown">
                   {suggestions.map((s) => (
-                    <li key={s._id} onMouseDown={() => handleSuggestionClick(s.title)}>
+                    <li key={s._id} onMouseDown={() => handleSuggestionClick(s)}>
                       <div className="suggestion-item">
                         <span className="suggestion-title">{s.title}</span>
                         {s.year && <span className="suggestion-year">{s.year}</span>}
