@@ -25,7 +25,8 @@ function App() {
     }
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/autocomplete?q=${encodeURIComponent(query)}`);
+        const apiUrl = import.meta.env.VITE_API_URL || 'https://movie-search-bar.onrender.com';
+        const res = await fetch(`${apiUrl}/api/autocomplete?q=${encodeURIComponent(query)}`);
         const data = await res.json();
         if (Array.isArray(data)) {
           setSuggestions(data);
@@ -46,7 +47,8 @@ function App() {
     setHasSearched(true);
     
     try {
-      let url = `http://localhost:5000/api/search?q=${encodeURIComponent(query)}&page=${specificPage}&limit=12`;
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://movie-search-bar.onrender.com';
+      let url = `${apiUrl}/api/search?q=${encodeURIComponent(query)}&page=${specificPage}&limit=12`;
       if (year) url += `&year=${year}`;
       if (rating) url += `&rating=${rating}`;
 
