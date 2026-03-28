@@ -1,14 +1,20 @@
-import React from 'react';
+﻿import React from 'react';
 
 const MovieCard = ({ movie }) => {
+  // Use poster as the primary source, but Atlas sample_mflix sometimes uses broken links or none.
+  const posterUrl = movie.poster && movie.poster.startsWith('http') 
+    ? movie.poster 
+    : 'https://via.placeholder.com/300x450?text=No+Poster';
+
   return (
     <div className="movie-card">
       <div className="movie-card-image-wrapper">
         <img 
-          src={movie.poster ? movie.poster : 'https://via.placeholder.com/300x450?text=No+Poster'} 
+          src={posterUrl} 
           alt={movie.title} 
           className="movie-poster" 
           loading="lazy"
+          onError={(e) => { e.target.src = 'https://via.placeholder.com/300x450?text=Poster+Not+Found'; }}
         />
         <div className="movie-rating">
           ★ {movie.imdb?.rating || 'N/A'}
@@ -22,7 +28,7 @@ const MovieCard = ({ movie }) => {
             <span key={idx} className="genre-tag">{genre}</span>
           ))}
         </div>
-        <p className="movie-plot">{movie.plot ? movie.plot.slice(0, 100) + '...' : 'No plot available.'}</p>
+        <p className="movie-plot">{movie.plot ? movie.plot.slice(0, 120) + '...' : 'No plot available.'}</p>
         
         <div className="movie-actions">
           {movie.externalLinks?.ott && (
@@ -42,8 +48,11 @@ const MovieCard = ({ movie }) => {
               rel="noopener noreferrer" 
               className="action-btn wiki-btn"
             >
-              Info
+              Wiki
             </a>
+          )}
+          {movie.fullplot && !movie.externalLinks?.ott && (
+             <span className="action-btn info-btn" title={movie.fullplot}>View More</span>
           )}
         </div>
       </div>

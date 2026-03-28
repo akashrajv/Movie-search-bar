@@ -1,4 +1,4 @@
-const { getDB } = require('../config/db');
+﻿const { getDB } = require('../config/db');
 
 exports.getAutocomplete = async (req, res) => {
   try {
@@ -12,28 +12,22 @@ exports.getAutocomplete = async (req, res) => {
     const pipeline = [
       {
         $search: {
-          index: 'autocomplete_title',
+          index: 'unified_index',
           autocomplete: {
-            query: keyword,
-            path: 'title',
-            fuzzy: {
-              maxEdits: 1,
-              prefixLength: 1,
-              maxExpansions: 256
-            }
+            query: keyword, score: { boost: { value: 5 } },
+            path: 'title'
           }
         }
       },
       {
         $limit: 10
       }
-      // Removed projection to ensure all fields like externalLinks are returned
     ];
 
     const results = await collection.aggregate(pipeline).toArray();
-    res.json(results);
+    res.json(results || []);
   } catch (err) {
-    console.error(err);
+    console.error("Autocomplete Error Detail:", err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -54,21 +48,16 @@ exports.getSearch = async (req, res) => {
     const pipelineMatch = [
       {
         $search: {
-          index: 'fuzzy_search',
+          index: 'unified_index',
           text: {
-            query: keyword,
+            query: keyword, score: { boost: { value: 5 } },
             path: ['title', 'plot', 'genres', 'fullplot', 'cast', 'directors'],
-            fuzzy: {
-              maxEdits: 2,
-              prefixLength: 0,
-              maxExpansions: 256
-            }
+            fuzzy: {}
           }
         }
       }
     ];
     
-    // Support basic filters
     const matchStage = {};
     if (req.query.year) matchStage.year = parseInt(req.query.year);
     if (req.query.genre) matchStage.genres = req.query.genre;
@@ -97,18 +86,21 @@ exports.getSearch = async (req, res) => {
     ];
 
     const results = await collection.aggregate(pipeline).toArray();
-    const data = results[0]?.data || [];
-    const total = results[0]?.metadata[0]?.total || 0;
+    
+    // SAFE PARSING
+    const root = results && results[0] ? results[0] : {};
+    const data = root.data || [];
+    const total = (root.metadata && root.metadata[0]) ? root.metadata[0].total : 0;
 
     res.json({
       data,
       total,
       page,
       limit,
-      totalPages: Math.ceil(total / limit)
+      totalPages: Math.ceil(total / limit) || 1
     });
   } catch (err) {
-    console.error(err);
+    console.error("Search Error Detail:", err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
