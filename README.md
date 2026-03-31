@@ -95,7 +95,7 @@ Discover your next favorite film with a powerful and intelligent movie search ex
 
 ### Results Display
 
-* Movie posters with rating ⭐
+* Movie posters with rating
 * Genres and descriptions
 * Clean responsive layout
 
@@ -114,12 +114,12 @@ This shows how fuzzy search corrects user mistakes automatically.
 ## Author
 
 
-Team: *Movie Mavericks* 🎯
+Team: *Movie Mavericks*
 
 ---
 
 
-## ⭐ Conclusion
+## Conclusion
 
 This project demonstrates how MongoDB Atlas Search can be used to build a **fast, intelligent, and user-friendly movie search system** with real-time suggestions and typo tolerance.
 
