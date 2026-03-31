@@ -1,4 +1,4 @@
-# 🎬 Atlas Movies – Smart Movie Search App
+# Atlas Movies – Smart Movie Search App
 
 Discover your next favorite film with a powerful and intelligent movie search experience built using MongoDB Atlas Search.
 
